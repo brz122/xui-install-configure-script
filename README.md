@@ -9,5 +9,5 @@ https://github.com/MHSanaei/3x-ui
 
 Выполнить команду на VPS сервере:
 ```
-/bin/bash <(curl -Ls https://raw.githubusercontent.com/maou0/xui-install-configure-script/refs/heads/main/xui-install-configure.sh) >>install_log.log 2>&1
+/bin/bash <(curl -Ls https://raw.githubusercontent.com/maou0/xui-install-configure-script/refs/heads/main/xui-install-configure.sh)
 ```
