@@ -135,7 +135,7 @@ echo "root:$PASSWORD_ROOT" | chpasswd
 
 # Меняем порт в конфиге ssh и отключаем возможность логина под root
 echo -e "${CYAN}Меняем ssh порт:${NC} $PORT"
-sed -i "/test/c\Port ${PORT}" /etc/ssh/sshd_config
+sed -i "/Port/c\Port ${PORT}" /etc/ssh/sshd_config
 sed -i "/PermitRootLogin/c\PermitRootLogin no" /etc/ssh/sshd_config
 systemctl restart ssh
 
@@ -297,7 +297,7 @@ echo "Новые данные для подключения к серверу:" 
 echo "Новый пользователь: $USERNAME" >> xui_info
 echo "Пароль пользователя ${USERNAME}: $PASSWORD" >> xui_info
 echo "Порт ssh: $PORT" >> xui_info
-echo -e "knock ${IFACE_IP} 11001 12002 13003 -d 500 && ssh ${USERNAME}@${IFACE_IP}" >> xui_info
+echo -e "knock ${IFACE_IP} 11001 12002 13003 -d 500 && ssh -p ${PORT} ${USERNAME}@${IFACE_IP}" >> xui_info
 cat <<EOF >> xui_info
 \$server = "${IFACE_IP}"
 \$user = "${USERNAME}"
@@ -349,6 +349,7 @@ cat <<EOF
 \$server = "${IFACE_IP}"
 \$user = "${USERNAME}"
 \$ports = @(11001, 12002, 13003)
+\$ssh_port = "${PORT}"
 # Стучимся в каждый порт из списка
 foreach (\$port in \$ports) {
     try {
@@ -365,7 +366,7 @@ foreach (\$port in \$ports) {
 
 # Попытка подключиться по ssh к серверу
 Write-Output "Пытаемся подключиться по ssh к серверу \$server..."
-Start-Process "ssh" -ArgumentList "\$user@\$server"
+Start-Process "ssh" -ArgumentList -p \$ssh_port "\$user@\$server"
 EOF
 
 echo -e "\n${CYAN}Запустите сохраненный файл командой из powershell:"
