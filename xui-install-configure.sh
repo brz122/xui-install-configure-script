@@ -154,6 +154,7 @@ cat <<EOF > /etc/knockd.conf
 	stop_command     = /sbin/iptables -D INPUT -s %IP% -p tcp --dport ${PORT} -j ACCEPT
 	cmd_timeout   = 60
 EOF
+
 sed -i "/START_KNOCKD/c\START_KNOCKD=1" /etc/default/knockd
 sed -i "/KNOCKD_OPTS/c\KNOCKD_OPTS=\"-i ${IFACE_NAME}\"" /etc/default/knockd
 sudo systemctl enable --now knockd
@@ -288,6 +289,7 @@ chmod +x /usr/local/bin/update-xui.sh
 systemctl daemon-reload
 systemctl enable --now check-certificate.timer
 systemctl enable --now update-xui.timer
+systemctl restart ssh
 
 echo -e "\n${YELLOW}--- Скопируйте всю информацию ниже в безопасное место, без доступа посторонних лиц! ---${NC}"
 grep 'Username:' install_log.log >> xui_info
