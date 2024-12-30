@@ -383,6 +383,5 @@ echo -e "\n${YELLOW}Обязательно ознакомьтесь со все�
 
 echo -e "${CYAN}Список рабочих доменов с хорошим пингом для маскировки на 30.12.2024.${NC}"
 echo -e "${GREEN}Эстония: ohtuleht.ee | nami-nami.ee | hind.ee | swedbank.ee | tallinn.ee | eki.ee"
-echo -e "Финляндия: tori.fi | prisma.fi | kauppalehti.fi | ratkojat.fi | telsu.fi | yliopistonapteekki.fi"
 echo -e "Нидерланды: nu.nl | telegraaf.nl | funda.nl | buienradar.nl | rabobank.nl | rtl.nl"
 echo -e "Швейцария: 20min.ch | search.ch | autoscout24.ch | local.ch | immoscout24.ch | mediamarkt.ch${NC}"
