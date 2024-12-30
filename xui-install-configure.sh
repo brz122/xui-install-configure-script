@@ -135,7 +135,7 @@ echo "root:$PASSWORD_ROOT" | chpasswd
 
 # Меняем порт в конфиге ssh и отключаем возможность логина под root
 echo -e "${CYAN}Меняем ssh порт:${NC} $PORT"
-sed -i "/Port/c\Port ${PORT}" /etc/ssh/sshd_config
+grep '#Port' /etc/ssh/sshd_config && sed -i "/#Port/c\Port 333" /etc/ssh/sshd_config || sed -i "/Port/c\Port 333" /etc/ssh/sshd_config
 sed -i "/^PermitRootLogin/c\PermitRootLogin no" /etc/ssh/sshd_config
 systemctl restart ssh
 
