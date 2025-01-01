@@ -112,7 +112,7 @@ Windows.
 
 # Выбор клиентов для подключения
 ## Linux | Windows | MacOS | Android
-[Hiddify Next](https://github.com/hiddify/hiddify-app)
+[Hiddify Next](https://github.com/hiddify/hiddify-app)  
 [Google play](https://play.google.com/store/apps/details?id=app.hiddify.com)
 
 Есть для всех платформ, кроме iOS.
