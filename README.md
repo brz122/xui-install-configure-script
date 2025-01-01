@@ -1,5 +1,6 @@
 # xui-install-configure-script
-Данный скрипт произведет установку панели 3x-ui из официального репозитория автора:\
+# Описание
+Данный скрипт произведет установку панели 3x-ui (xray vless reality) из официального репозитория автора:\
 https://github.com/MHSanaei/3x-ui  
 
 Помимо установки панели, будет произведена базовая настройка сервера, а именно:
@@ -24,12 +25,19 @@ Windows: стучаться будем скриптом\
 - [PQ.Hosting](https://bill.pq.hosting/)
 - [Aeza](https://aeza.net/)
 
-Выполнить команду на VPS сервере:
+# Установка и настройка сервера xray
+Получив данные для входа на VPS сервер (обычно присылают на почту после оплаты) в терминале (Linux/MacOS) или powershell (Windows) вводим команду чтобы войти на сервер по ssh:
+```
+ssh root@45.82.253.40
+```
+где root - имя пользователя, 45.82.253.40 - ip адрес сервера, на запрос пароля - вводим полученный пароль из почты.
+
+Выполняем команду на VPS сервере:
 ```
 /bin/bash <(curl -Ls https://raw.githubusercontent.com/maou0/xui-install-configure-script/refs/heads/main/xui-install-configure.sh)
 ```
 Будет запрошен домен, введите домена вида: example.duckdns.org\
-Затем будет запрощено подтверждение, отвечайте: y
+Затем будет запрошено подтверждение чтобы продолжить. Если согласны, введите: y
 
 Дождитесь завершения установки и сохраните в надежное место все данные, которые предоставит скрипт:
 ![image](https://github.com/user-attachments/assets/eab96115-bebd-4617-91a5-1d83ef660d43)
@@ -39,7 +47,7 @@ Windows: стучаться будем скриптом\
 Логины, пароли, а также адрес и порт панели генерируются случайный образом при каждой установке, поэтому не обязательно их менять.
 
 Заходите в панель и сделайте 2 настройки:
-1. Перейдите Xray Configs -> Basics -> Basic Routing, добавьте опцию 'Russia' в поле 'Block IPs' и опции 'Russia', '.ru' в поле 'Block Domains'. После этого нажмите кнопки 'Save' и 'Restart Xray' вверху страницы.
+1. Перейдите Xray Configs -> Basics -> Basic Routing, добавьте опцию 'Russia' в поле 'Block IPs' и опции 'Russia', '.ru' в поле 'Block Domains'. После этого нажмите кнопки 'Save' и 'Restart Xray' вверху страницы. Это заблокирует нам подключение к сайта и РУ зоны с нашего сервера.
 
 ![image](https://github.com/user-attachments/assets/c8ca165e-7369-4b42-b9e4-515adf36296c)
 
@@ -74,21 +82,97 @@ Windows: стучаться будем скриптом\
 
 ![image](https://github.com/user-attachments/assets/1cc65790-d15c-424e-baf8-44985ef4c788)
 
-7. (Необязательно) Чтобы сделать подключение к нашему VPS серверу еще безопасней, можно отключить возможность входа по паролю и ходить по ключам. Но учтите, что в случае утери ключа (например, при переустановке ОС) вы потеряете доступ к серверу по ssh.
-Linux/MacOS: вводим следующие команды в терминал (вторая команда будет отличаться, подставьте свои значения)
+7. (Необязательно) Чтобы сделать подключение к нашему VPS серверу еще безопасней, можно отключить возможность входа по паролю и ходить по ключам. Но учтите, что в случае утери ключа (например, при переустановке ОС) вы потеряете доступ к серверу по ssh.\
+
+Linux/MacOS.
+
+Вводим следующие команды в терминал (вторая и третья команда будут отличаться, подставьте свои значения)
 ```
 ssh-keygen -t ed25519
+```
+```
 knock 45.82.253.40 11001 12002 13003 -d 500 && ssh-copy-id -p 26007 qogprthd@45.82.253.40
 ```
 Теперь заходим на сервер по ключу:
 ```
 knock 45.82.253.40 11001 12002 13003 -d 500 && ssh -p 26007 qogprthd@45.82.253.40
 ```
-Вводим команду:
+Вводим команды:
 ```
 sudo -i
-
 ```
+```
+sed -i "/PubkeyAuthentication/c\PubkeyAuthentication yes" /etc/ssh/sshd_config && sed -i "/PasswordAuthentication/c\PasswordAuthentication no" /etc/ssh/sshd_config && systemctl restart ssh
+```
+Windows.
 
-На этом настройка сервера завершена, теперь 
+#TODO
+
+На этом настройка сервера завершена, теперь нужно установить клиентские программы на свои устройства для подключения к xray серверу.
+
+# Выбор клиентов для подключения
+## Linux | Windows | MacOS | Android
+[Hiddify Next](https://github.com/hiddify/hiddify-app)
+[Google play](https://play.google.com/store/apps/details?id=app.hiddify.com)
+
+Есть для всех платформ, кроме iOS.
+
+![image](https://github.com/user-attachments/assets/dbb717d7-79d9-474c-a7bb-90c5da65884f)
+
+## iOS | MacOS
+[FoXray](https://apps.apple.com/ru/app/foxray/id6448898396)
+
+![image](https://github.com/user-attachments/assets/9108a17b-9a5d-45d9-abf6-a9246dacda9c)
+
+# Настройка клиентов
+## Hiddify
+1. Зайдите в панель 3x-ui -> Inbounds -> нажмите на плюсик -> из списка у одного из созданных клиентов нажмите кружок с i -> скопируйте ссылку для подключения
+
+![image](https://github.com/user-attachments/assets/99a47fbe-07e1-404c-b228-8a385a0c915a)
+
+![image](https://github.com/user-attachments/assets/21051814-ba36-4aef-baf1-86dd36fe274d)
+
+![image](https://github.com/user-attachments/assets/5722bc97-c45b-40d2-9f67-7e62b2dbd8db)
+
+2. Запустите клиент Hiddify -> нажмите на плюсик -> Add From Clipboard
+
+![image](https://github.com/user-attachments/assets/78296801-e294-47f9-9560-f265ed566c3c)
+
+![image](https://github.com/user-attachments/assets/17ff0f40-e8d5-4d68-8b08-a81c809e8309)
+
+3. Мобильные устройства можно подключать отсканировав QR код
+
+![image](https://github.com/user-attachments/assets/8ed72fbc-1495-4ff5-920f-37ecda20e64a)
+
+![image](https://github.com/user-attachments/assets/4aef10c0-f560-4f7d-a187-12e85de34476)
+
+4. Мы заблокировали доступ к сайтам из РУ зоны на сервере, чтобы ходить на эти сайты напрямую через провайдера, перейдите в Config options -> в пункте Region поставьте Russia (ru)
+
+![image](https://github.com/user-attachments/assets/8ae83a1a-135d-4950-9301-158b864d33b3)
+
+5. Активируйте подключение.
+
+![image](https://github.com/user-attachments/assets/d8bace2c-e8d2-4809-88b5-c5a051ed8c45)
+
+![image](https://github.com/user-attachments/assets/947b4207-2f8b-40e9-a3f9-172e7ac7307d)
+
+
+## FoXray
+
+1. Зайдите в панель 3x-ui -> Inbounds -> нажмите на плюсик -> из списка у одного из созданных клиентов нажмите QR код, как в пункте 3 настройки Hiddify
+2. Запустите клиент FoXray -> нажмите на значок сканирования QR кода и отсканируйте QR код из панели 3x-ui
+
+![image](https://github.com/user-attachments/assets/51e63698-3fde-4f1a-b440-4df4e48a39b9)
+
+3. Мы заблокировали доступ к сайтам из РУ зоны на сервере, чтобы ходить на эти сайты напрямую через провайдера, перейдите в Simple -> поставить галочку и нажать на Simple -> настройки как на скриншоте -> Save внизу страницы
+
+![image](https://github.com/user-attachments/assets/f33b6186-914a-416f-adaf-246b43a9402d)
+
+![image](https://github.com/user-attachments/assets/1a53c6a8-4be7-457d-abc9-074f6d8c463a)
+
+![image](https://github.com/user-attachments/assets/d369d56f-1593-4968-adf6-6fc0fc56679e)
+
+4. Активируйте подключение.
+
+![image](https://github.com/user-attachments/assets/f4748b9d-1087-44ef-9467-63766dd9fa1c)
 
