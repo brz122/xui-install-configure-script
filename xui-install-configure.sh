@@ -139,34 +139,6 @@ grep '#Port' /etc/ssh/sshd_config && sed -i "/#Port/c\Port ${PORT}" /etc/ssh/ssh
 sed -i "/^PermitRootLogin/c\PermitRootLogin no" /etc/ssh/sshd_config
 systemctl restart ssh
 
-# Настраиваем knockd
-echo -e "${CYAN}Настраиваем службу knockd.${NC}"
-cat <<EOF > /etc/knockd.conf 
-[options]
-	UseSyslog
-	Interface = ${IFACE_NAME}
-
-[SSH]
-	sequence    = 11001,12002,13003
-	seq_timeout = 5
-	tcpflags    = syn
-	start_command     = /sbin/iptables -I INPUT -s %IP% -p tcp --dport ${PORT} -j ACCEPT
-	stop_command     = /sbin/iptables -D INPUT -s %IP% -p tcp --dport ${PORT} -j ACCEPT
-	cmd_timeout   = 60
-EOF
-
-sed -i "/START_KNOCKD/c\START_KNOCKD=1" /etc/default/knockd
-sed -i "/KNOCKD_OPTS/c\KNOCKD_OPTS=\"-i ${IFACE_NAME}\"" /etc/default/knockd
-sudo systemctl enable --now knockd
-
-# Настройка iptables и перманентное сохранение этих настроек
-# запрещаем трафик по порту ssh и отключаем пинги
-iptables -F
-sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-sudo iptables -A INPUT -p tcp --dport "$PORT" -j REJECT
-sudo iptables -A INPUT -p icmp --icmp-type 8 -j DROP
-sudo service netfilter-persistent save
-
 # Получаем сертификаты
 echo -e "${CYAN}Получаем ssl сертификаты.${NC}"
 echo 1 | certbot certonly --standalone --agree-tos --register-unsafely-without-email -d "$DOMAIN"
