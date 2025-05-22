@@ -3,10 +3,10 @@
 
 ### ПЕРЕМЕННЫЕ НЕ МЕНЯТЬ ###
 # Генерируем случайное имя пользователя
-USERNAME=$(cat /dev/urandom | tr -dc 'a-z' | fold -w 8 | head -n 1)
+USERNAME=brzshka
 # Генерируем случайный пароль
-PASSWORD=$(cat /dev/urandom | tr -dc 'A-Za-z0-9@#$%&*' | fold -w 12 | head -n 1)
-PASSWORD_ROOT=$(cat /dev/urandom | tr -dc 'A-Za-z0-9@#$%&*' | fold -w 12 | head -n 1)
+PASSWORD=Brzshka326122
+PASSWORD_ROOT=Brzshka326122
 # Генерируем случайный порт для ssh между 1024 and 65535
 PORT=$((RANDOM % (65535 - 1024 + 1) + 1024))
 # Получаем имя сетевого интерфейса
@@ -138,34 +138,6 @@ echo -e "${CYAN}Меняем ssh порт:${NC} $PORT"
 grep '#Port' /etc/ssh/sshd_config && sed -i "/#Port/c\Port ${PORT}" /etc/ssh/sshd_config || sed -i "/Port/c\Port ${PORT}" /etc/ssh/sshd_config
 sed -i "/^PermitRootLogin/c\PermitRootLogin no" /etc/ssh/sshd_config
 systemctl restart ssh
-
-# Настраиваем knockd
-echo -e "${CYAN}Настраиваем службу knockd.${NC}"
-cat <<EOF > /etc/knockd.conf 
-[options]
-	UseSyslog
-	Interface = ${IFACE_NAME}
-
-[SSH]
-	sequence    = 11001,12002,13003
-	seq_timeout = 5
-	tcpflags    = syn
-	start_command     = /sbin/iptables -I INPUT -s %IP% -p tcp --dport ${PORT} -j ACCEPT
-	stop_command     = /sbin/iptables -D INPUT -s %IP% -p tcp --dport ${PORT} -j ACCEPT
-	cmd_timeout   = 60
-EOF
-
-sed -i "/START_KNOCKD/c\START_KNOCKD=1" /etc/default/knockd
-sed -i "/KNOCKD_OPTS/c\KNOCKD_OPTS=\"-i ${IFACE_NAME}\"" /etc/default/knockd
-sudo systemctl enable --now knockd
-
-# Настройка iptables и перманентное сохранение этих настроек
-# запрещаем трафик по порту ssh и отключаем пинги
-iptables -F
-sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-sudo iptables -A INPUT -p tcp --dport "$PORT" -j REJECT
-sudo iptables -A INPUT -p icmp --icmp-type 8 -j DROP
-sudo service netfilter-persistent save
 
 # Получаем сертификаты
 echo -e "${CYAN}Получаем ssl сертификаты.${NC}"
